@@ -25,4 +25,4 @@ const userSchema = new mongoose.Schema({
         minlength:8
     }
 })
-module.exports.userSchema = mongoose.model("userss",userSchema)
+module.exports.userSchema = mongoose.model("users",userSchema)

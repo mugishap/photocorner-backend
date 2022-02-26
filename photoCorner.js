@@ -1,14 +1,13 @@
 //GET THE NECESSARY PACKAGES AND PORTS
-
 const express = require('express')
 const bodyParser = require('body-parser')
 const multer = require('multer')
 const cors = require('cors')
 const mongoose = require('mongoose')
-const { APPCENTER } = require('ci-info')
 const bcrypt = require('bcrypt')
 const { userSchema } = require('./pc.userSchema')
-const PORT = 9000
+require("dotenv").config()
+const PORT = process.env.PORT || 8080
 const URL = "mongodb+srv://Precieux:eVrjX6PfhqMc3Mub@cluster0.h5zmc.mongodb.net/Photo_Corner"
 
 //ONLINE AND OFFLINE URLs
@@ -18,8 +17,9 @@ const URL = "mongodb+srv://Precieux:eVrjX6PfhqMc3Mub@cluster0.h5zmc.mongodb.net/
 
 //DECLARE APP AND GIVE IT A PORT TO LISTEN TO
 const app = express()
-app.use(cors)
-app.use(bodyParser.json())
+app.use(cors({origin: "*"}))
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
 app.listen(PORT, () => {
     console.log("Listening on port " + PORT + " is a " + " success.");
 })
@@ -27,7 +27,7 @@ app.listen(PORT, () => {
 //CREATE DATABASE CONNECTION WITH MONGODB ATLAS
 
 const dbConnection = () => {
-    mongoose.connect(URL,()=>{
+    mongoose.connect(URL, () => {
         console.log("CONNECTED TO DB SUCCESFULLY");
     })
 }
@@ -41,22 +41,7 @@ app.get('/', async (req, res) => {
 
 //THE CREATE USER APIs IMPORTED SCHEMA FROM PHOTO CORNER USER SCHEMA
 
-app.post('/newUser', async (req, res) => {
-    let hashedPassword = await bcrypt.hash(req.body.password, 8)
-    const user = await new userSchema({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        userName: req.body.userName,
-        email: req.body.email,
-        password: hashedPassword,
-    })
-    await user.save()
-    if (!user)
-        res.status(400).send("ACCOUNT NOT CREATED")
-    else
-        res.status(200).send("ACCOUNT SUCCESSFULLY CREATED")
-
-})
+app.use("/user", require("./routes/user"))
 
 //GET USER APIs USING DIFFERENT CREDENTIALS
 //GET ALL USERS
@@ -70,11 +55,7 @@ app.get('/users', async (req, res) => {
 })
 //GET USER BY NAME
 app.get('/getuser/:name', async (req, res) => {
-    let err = "No such user named " + req.params.name + " in our database"
-    const user = await userSchema.find({
-        userName: { $regex: `^${req.params.name}$`, $options: 'i' }
-    })
-    return res.status(200).send(user)
+
 
 })
 //UPDATE USER
@@ -98,17 +79,50 @@ app.put('/update/:name', async (req, res) => {
     return res.status(200).send(user)
 })
 //DELETE ACCOUNT
-app.delete('/deleteAcount/:name',async(req,res)=>{
-    try {
-        const user = await userSchema.find({
-            userName:{$regex: `^${req.params.name}$`,$options: 'i'}
-        })
-        let userId = user[0]._id
-        const needed = await userSchema.findByIdAndDelete(userId)
-        return res.status(200).send("ACCOUNT DELETED SUCCESSFULLY")
-    } catch (error) {
-        
-    }
+app.delete('/deleteAcount/:name', async (req, res) => {
+    const user = await userSchema.find({
+        userName: { $regex: `^${req.params.name}$`, $options: 'i' }
+    })
+    let userId = user[0]._id
+    const needed = await userSchema.findByIdAndDelete(userId)
+    return res.status(200).send("ACCOUNT DELETED SUCCESSFULLY")
 
 })
 
+//UPLOAD PICTURES
+const { append } = require('express/lib/response')
+const upload = multer({
+    dest: 'images',
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req,file,cb){
+        if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
+            cb(new Error('Please upload an image'))
+        }
+        cb(undefined,true)
+    }
+})
+
+app.post('/upload', upload.single('upload'), (req, res) => {
+    res.send()
+})
+// router.post('/upload', upload.single('upload'), (req, res) => {
+//     res.send()
+//     }, (error, req, res, next) => {
+//     res.status(400).send({error: error.message})
+//     })
+
+// const express = require("express")
+// const app =express();
+// app.use(express.json())
+// app.use(express.urlencoded({extended: true}))
+
+// app.get("/", async(req,res)=>{
+//     console.log("1")
+//     return res.status(200).send("WELCOME TO PHOTO CORNER")
+// })
+
+// app.listen(8000, ()=>{
+//     console.log("server is running")
+// })
