@@ -1,0 +1,31 @@
+{
+  "name": "photocorner-backend",
+  "version": "1.0.0",
+  "description": "backend for photo corner",
+  "main": "photoCorner.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "nodemon": "nodemon photoCorner.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mugishap/photocorner-backend.git"
+  },
+  "author": "Precieux",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mugishap/photocorner-backend/issues"
+  },
+  "homepage": "https://github.com/mugishap/photocorner-backend#readme",
+  "dependencies": {
+    "axios": "^0.26.0",
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "mongoose": "^6.2.3",
+    "multer": "^1.4.4",
+    "nodemon": "^2.0.15"
+  }
+}
