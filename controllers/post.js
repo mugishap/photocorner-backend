@@ -28,9 +28,6 @@ exports.newPost = async (req, res) => {
         default:
             break;
     }
-    if (day = now.getDay()) {
-        day = "Today"
-    }
     if (now.getHours() < 12) {
         state = "AM"
     }

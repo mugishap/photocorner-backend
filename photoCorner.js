@@ -6,12 +6,15 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 require("dotenv").config()
 const PORT = process.env.PORT || 8080
+const http = require('http')
+
 
 // const URL = "mongodb+srv://Precieux:eVrjX6PfhqMc3Mub@cluster0.h5zmc.mongodb.net/Photo_Corner"
 const URL = "mongodb://0.0.0.0:27017/Photo_Corner";
 
 //DECLARE APP AND GIVE IT A PORT TO LISTEN TO
 const app = express()
+http.createServer(app) //.listen(8080)
 app.use(bodyParser.json())
 app.use(cors({ origin: "*" }))
 app.use(express.json())
