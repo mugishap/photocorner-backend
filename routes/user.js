@@ -1,11 +1,11 @@
 const express = require("express");
 const { registerUser, getUser, updateUser, deleteUser, allUsers } = require("../controllers/user");
 const fileUpload = require("../middlewares/fileUpload");
-const router = express.Router()
+const userRouter = express.Router()
 
-router.post("/registerUser", fileUpload.single("image"), registerUser);
-router.get('/getUser/:name',getUser)
-router.get('/allUsers',allUsers)
-router.put('/updateUser/:name',updateUser)
-router.delete('/deleteUser/:name',deleteUser)
-module.exports = router;
+userRouter.post("/registerUser", registerUser);
+userRouter.get('/getUser/:name',getUser)
+userRouter.get('/allUsers',allUsers)
+userRouter.put('/updateUser/:name',updateUser)
+userRouter.delete('/deleteUser/:name',deleteUser)
+module.exports = userRouter;

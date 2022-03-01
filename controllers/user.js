@@ -3,29 +3,29 @@ const bcrypt = require('bcrypt')
 const express = require("express")
 
 exports.registerUser = async (req, res) => {
-let users = await userSchema.find({})
-for (let i = 0; i < users.length; i++) {
-    if (req.body.userName == users[i].userName) {
-           return res.status(400).send("User with that username already exists")
-    }  
-}
-        try {
-            let hashedPassword = await bcrypt.hash(req.body.password, 10)
-            const user = new userSchema({
+    let users = await userSchema.find({})
+    for (let i = 0; i < users.length; i++) {
+        if (req.body.userName == users[i].userName) {
+            return res.status(400).json({ message: "User with that username already exists" })
+        }
+    }
+    try {
+        let hashedPassword = await bcrypt.hash(req.body.password, 10)
+        const user = new userSchema({
             fullName: req.body.fullName,
             userName: req.body.userName,
             email: req.body.email,
             password: hashedPassword,
-            })
-            if (!user) return res.status(400).send("ACCOUNT NOT CREATED")
-                await user.save()
-            return res.status(200).send("Account with username " + req.body.userName + " was successfully created")
+        })
+        if (!user) return res.status(400).json("ACCOUNT NOT CREATED")
+        await user.save()
+        return res.status(200).json({ message: "Account with username " + req.body.userName.toUpperCase() + " was successfully created" })
     }
     catch (error) {
         console.log(error);
     }
 
-    
+
 }
 exports.getUser = async (req, res) => {
     let err = "No such user named " + req.params.name + " in our database"
