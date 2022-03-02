@@ -1,8 +1,10 @@
 const express = require('express')
 const { postSchema } = require('../models/posts')
 exports.newPost = async (req, res) => {
+    // console.log(req.body)
+    // return res.json({message: "Got the info"})
     let now = new Date()
-    let day,state
+    let day,time
     switch (now.getDay()) {
         case 1:
             day = "Monday"
@@ -28,22 +30,26 @@ exports.newPost = async (req, res) => {
         default:
             break;
     }
-    if (now.getHours() < 12) {
-        state = "AM"
+    if (now.getMinutes() < 10) {
+        time = day + " at " + now.getHours() + ":0" + now.getMinutes()
     }
-    else {
-        state = "PM"
+    else{
+        time = day + " at " + now.getHours() + ":" + now.getMinutes()
     }
     let post = new postSchema({
-        created: day + " at " + now.getHours() + " " + state,
+        created: day + " at " + now.getHours() + ":" + now.getMinutes(),
         userName: req.body.userName,
         caption: req.body.caption
     })
-    if (!post) return res.status(400).send("POST WAS NOT UPLOADED")
+    if (!post) return res.status(400).json({message: "POST WAS NOT UPLOADED"})
     await post.save()
-    return res.status(200).send(post)
+    return res.status(200).json(post)
+}
+exports.allPosts = async(req,res)=>{
+    let posts = await postSchema.find()
+    return res.status(200).send(posts)
 }
 exports.deletePost = async (req, res) => {
     await postSchema.findByIdAndDelete(req.params.id)
-    return res.status(200).send("POST WAS DELETED SUCCESFULLY")
+    return res.status(200).json({message:"POST WAS DELETED SUCCESFULLY"})
 }
