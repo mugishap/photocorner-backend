@@ -33,6 +33,7 @@ exports.newPost = async (req, res) => {
     if (now.getMinutes() < 10) {
         time = day + " at " + now.getHours() + ":0" + now.getMinutes()
     }
+    else if(now.getMinutes() == 0){time = 00}
     else{
         time = day + " at " + now.getHours() + ":" + now.getMinutes()
     }
