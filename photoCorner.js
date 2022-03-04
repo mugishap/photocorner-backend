@@ -5,10 +5,10 @@ const multer = require('multer')
 const cors = require('cors')
 const mongoose = require('mongoose')
 require("dotenv").config()
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 3000
 const http = require('http')
-const io = require('socket.io')
-const fs =require("fs")
+const io = require('socket.io')(8080)
+const fs = require("fs")
 var url = require("url");
 
 // const URL = "mongodb+srv://Precieux:eVrjX6PfhqMc3Mub@cluster0.h5zmc.mongodb.net/Photo_Corner"
@@ -26,7 +26,7 @@ app.listen(PORT, () => {
 })
 
 // io.on("connection", (socket)=>{
-     
+
 // })
 
 //CREATE DATABASE CONNECTION WITH MONGODB ATLAS
@@ -38,9 +38,9 @@ const dbConnection = () => {
 }
 dbConnection()
 
-app.get("/chat", async(req,res)=>{
-   let file = fs.readFileSync("index.html")
-   return res.end(file)
+app.get("/chat", async(req, res) => {
+    let file = fs.readFileSync("index.html")
+    return res.end(file)
 })
 
 // app.get('/', async (req, res) => {
@@ -71,4 +71,4 @@ app.use("/user", require("./routes/user"))
 
 
 //ROUTES FROM POST
-app.use("/post",require('./routes/posts'))
+app.use("/post", require('./routes/posts'))

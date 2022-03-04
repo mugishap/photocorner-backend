@@ -7,26 +7,22 @@ exports.registerUser = async (req, res) => {
     for (let i = 0; i < users.length; i++) {
         if (req.body.userName == users[i].userName) {
             return res.status(400).json({ message: "User with that username already exists" })
+        } else if (req.body.email == users[i].email) {
+            return res.status(400).json({ message: "User with that email already exists" })
         }
     }
     try {
         let hashedPassword = await bcrypt.hash(req.body.password, 10)
-        let users = await userSchema.find()
         const user = new userSchema({
             fullName: req.body.fullName,
             userName: req.body.userName,
             email: req.body.email,
             password: hashedPassword,
         })
-        let emailval
-        for(i = 0;i < users.length;i++){
-            if(req.body.email == users[i].email) emailval = users[i].email
-        }
-        if (req.body.email == emailval) return res.status(400).json("ACCOUNT NOT CREATED")
+        if (!user) return res.status(400).json("ACCOUNT NOT CREATED")
         await user.save()
         return res.status(200).json({ message: "Account with username " + req.body.userName.toUpperCase() + " was successfully created" })
-    }
-    catch (error) {
+    } catch (error) {
         console.log(error);
     }
 
@@ -80,23 +76,26 @@ exports.allUsers = async (req, res) => {
     })
 }
 exports.confirmUser = async (req, res) => {
-    let needed,message
+    let needed, message
     const users = await userSchema.find()
     for (i = 0; i < users.length; i++) {
         if (users[i].email == req.body.email) {
             needed = users[i]
             message = "Email correct "
-        }
-        else{
+        } else {
             message = "Email incorrect "
         }
     }
-    console.log(req.body)
-    const comparison = await bcrypt.compare(req.body.password, needed.password)
-    if (comparison == true) {
-        return res.status(200).send(message + "and Passwords match")
-    }
-    else {
-        return res.status(400).send(message + "but passwords do not match")
+    if (message == "Email incorrect") {
+        return res.status(400).send("No user found with that email")
+    } else {
+        const comparison = await bcrypt.compareSync(req.body.password, needed.password, (err, res) => {
+            if (err) console.log("Error in comparing password please try again")
+        })
+        if (comparison == true) {
+            return res.status(200).send(message + "and Passwords match")
+        } else {
+            return res.status(400).send(message + "but passwords do not match")
+        }
     }
 }
