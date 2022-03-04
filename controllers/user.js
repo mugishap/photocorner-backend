@@ -1,8 +1,10 @@
 const { userSchema } = require("../models/user")
 const bcrypt = require('bcrypt')
 const express = require("express")
+const jwt = require('jsonwebtoken')
 
 exports.registerUser = async (req, res) => {
+    
     let users = await userSchema.find({})
     for (let i = 0; i < users.length; i++) {
         if (req.body.userName == users[i].userName) {
@@ -12,16 +14,19 @@ exports.registerUser = async (req, res) => {
         }
     }
     try {
-        let hashedPassword = await bcrypt.hash(req.body.password, 10)
+        let hashedPassword = await bcrypt.hash(req.body.password, 20)
         const user = new userSchema({
             fullName: req.body.fullName,
             userName: req.body.userName,
-            email: req.body.email,
+            email: req.body.email.toLowerCase(),
             password: hashedPassword,
         })
+        
         if (!user) return res.status(400).json("ACCOUNT NOT CREATED")
+        const token = jwt.sign({user_id:user._id},process.env.TOKEN_KEY,{expiresIn:"2h"})
+        user.token = token
         await user.save()
-        return res.status(200).json({ message: "Account with username " + req.body.userName.toUpperCase() + " was successfully created" })
+        return res.status(200).json({ message: "Account with username " + req.body.userName.toUpperCase() + " was successfully created" ,token})
     } catch (error) {
         console.log(error);
     }
@@ -37,7 +42,6 @@ exports.getUser = async (req, res) => {
         return res.status(404).send(err)
     } else {
         return res.status(200).send(user)
-
     }
 }
 exports.updateUser = async (req, res) => {
@@ -79,7 +83,7 @@ exports.confirmUser = async (req, res) => {
     let needed, message
     const users = await userSchema.find()
     for (i = 0; i < users.length; i++) {
-        if (users[i].email == req.body.email) {
+        if (users[i].email.toLowerCase() == req.body.email.toLowerCase()) {
             needed = users[i]
             message = "Email correct "
         } else {

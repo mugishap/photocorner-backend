@@ -18,6 +18,9 @@ const userSchema = new mongoose.Schema({
     password:{
         type: String,
         // minlength:8
+    },
+    token:{
+        type:String
     }
 })
 module.exports.userSchema = mongoose.model("users",userSchema)
