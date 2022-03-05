@@ -2,6 +2,7 @@ const { userSchema } = require("../models/user")
 const bcrypt = require('bcrypt')
 const express = require("express")
 const jwt = require('jsonwebtoken')
+const { emailValidation } = require("../emailValidation")
 
 exports.registerUser = async (req, res) => {
 
@@ -26,10 +27,14 @@ exports.registerUser = async (req, res) => {
         })
 
         if (!user) return res.status(400).json("ACCOUNT NOT CREATED")
-        const token = jwt.sign({ user_id: user._id }, process.env.TOKEN_KEY, { expiresIn: "2h" })
-        user.token = token
-        await user.save()
-        return res.status(200).json({ message: "Account with username " + req.body.userName + " was successfully created", token })
+        else {
+            const token = jwt.sign({ user_id: user._id }, process.env.TOKEN_KEY, { expiresIn: "2h" })
+            user.token = token
+            // await user.save()
+            emailValidation(req.body.email)
+
+            return res.status(200).json({ message: "Account with username " + req.body.userName + " was successfully created", token })
+        }
     } catch (error) {
         console.log(error);
     }
