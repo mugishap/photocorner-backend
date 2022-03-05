@@ -1,4 +1,3 @@
-exports.emailValidation = email,req => {
 
   require('dotenv').config()
   const nodemailer = require('nodemailer')
@@ -13,17 +12,17 @@ exports.emailValidation = email,req => {
 
   let mailOptions = {
     from: 'precieuxmugisha@gmail.com',
-    to: email,
+    to: 'manziisrael99@gmail.com',
     subject: 'Trying to send email using nodemailer',
     // text:'Nodemailer helps to send emails from one account to another through an easy way this keeps people updated about thir accounts everywhere they are.',
-    html: "<h1>Welcome to PHOTOCORNER.</h1><h2>Click on the link below to verify your account</h2><br><a target='_blank' href='youtube.com'>photocorner.com</a><br><p>If you didn't request this email verification, we are really sorry someone might have conused your account eith his or hers</p>"
+    html: "<head><style>#main{background-color: rgba(109, 99, 109, 0.89); color: white; margin: auto; display: flex; flex-flow: column; justify-content: center; align-items: center; width: 40%; border-radius: 10px; padding: 20px;}.top{display: flex; flex-direction: column; align-items: center; background-color: purple; border-top-right-radius: 10px; border-top-left-radius: 10px; padding: 20px; width: 80%;}.bottom{width: 80%; display: flex; flex-direction: column; background-color: white; color: black; font-weight: bold; text-align: center; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; padding: 10px 20px;}img{width: 50px; height: 50px;}body{font-family: Ubuntu;}#h3{text-align: left;}</style> <link rel='preconnect' href='https://fonts.googleapis.com'> <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin> <link href='https://fonts.googleapis.com/css2?family=Smooch&family=Ubuntu:wght@300&display=swap' rel='stylesheet'></head><body onload='playText()'> <div id='main'> <div class='top'> <img src='/images/logo.png' alt='Photo corner logo'> <h1>Welcome to PHOTOCORNER</h2> </div><div class='bottom'> <h3 id='h3'></h3> <p>Your verification code is written below.This code will expire in two hours time.</p><p id='number'></p><p>If you didn't request this email validation please ignore this message.</p></div></div><script>function randomNumber(max, min){let randomNumber=Math.floor(Math.random() * (max - min) + min); document.getElementById('number').innerHTML=randomNumber;}; randomNumber(999999, 100000); var i=0; function playText(){let text='Share your images the fastest way by using PHOTOCORNER.'; if (i < text.length){document.getElementById('h3').innerHTML +=text.charAt(i); i++; setTimeout(playText, 100);};}; </script></body>"
   }
 
   transporter.sendMail(mailOptions, (error, info) => {
-    if (error) return ;
-    else console.log('Email sent: ' + info.response);
+    if (error) console.log('Email not sent: ' + error);
+    else console.log({message:'Email sent'})
   });
-}
+
 
 
 
