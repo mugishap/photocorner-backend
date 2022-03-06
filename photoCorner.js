@@ -13,8 +13,8 @@ const fs = require("fs")
 var url = require("url");
 const server = http.createServer(app)
 
-// const URL = "mongodb+srv://Precieux:eVrjX6PfhqMc3Mub@cluster0.h5zmc.mongodb.net/Photo_Corner"
-const URL = "mongodb://0.0.0.0:27017/Photo_Corner";
+const URL = "mongodb+srv://Precieux:eVrjX6PfhqMc3Mub@cluster0.h5zmc.mongodb.net/Photo_Corner"
+// const URL = "mongodb://0.0.0.0:27017/Photo_Corner";
 
 //DECLARE APP AND GIVE IT A PORT TO LISTEN TO
 app.use(bodyParser.json())
