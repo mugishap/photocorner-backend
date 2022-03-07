@@ -15,30 +15,24 @@ exports.registerUser = async (req, res) => {
             return res.status(400).json({ message: "User with that email already exists" })
         }
     }
-    try {
-        let hashedPassword = await bcrypt.hashSync(req.body.password, 20, (err, hash) => {
-            if (!err) console.log("Error in hashing pasword")
-            else console.log(hash)
-        })
-        const user = new userSchema({
-            fullName: req.body.fullName,
-            userName: req.body.userName,
-            email: req.body.email,
-            password: hashedPassword,
-        })
+    let hashedPassword = await bcrypt.hashSync(req.body.password, 20, (err, hash) => {
+        if (err) console.log("Error in hashing pasword")
+        else console.log(hash)
+    })
+    const user = new userSchema({
+        fullName: req.body.fullName,
+        userName: req.body.userName,
+        email: req.body.email,
+        password: hashedPassword,
+    })
 
-        if (!user) return res.status(400).json("ACCOUNT NOT CREATED")
-        else {
-            const token = jwt.sign({ user_id: user._id }, process.env.TOKEN_KEY, { expiresIn: "2h" })
-            user.token = token
-            await user.save()
-            res.status(201).send("ACCOUNT CREATED")
-        }
-    } catch (error) {
-        console.log(error);
+    if (!user) return res.status(400).json("ACCOUNT NOT CREATED")
+    else {
+        const token = jwt.sign({ user_id: user._id }, process.env.TOKEN_KEY, { expiresIn: "2h" })
+        user.token = token
+        await user.save()
+        res.status(201).json({message:"Account created"})
     }
-
-
 }
 exports.getUser = async (req, res) => {
     let err = "No such user named " + req.params.name + " in our database"
