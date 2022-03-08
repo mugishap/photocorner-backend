@@ -31,7 +31,7 @@ exports.registerUser = async (req, res) => {
         const token = jwt.sign({ user_id: user._id }, process.env.TOKEN_KEY, { expiresIn: "2h" })
         user.token = token
         await user.save()
-        res.status(201).json({message:"Account created"})
+        res.status(201).json({ message: "Account created" })
     }
 }
 exports.getUser = async (req, res) => {
@@ -85,22 +85,19 @@ exports.confirmUser = async (req, res) => {
     const users = await userSchema.find()
     for (i = 0; i < users.length; i++) {
         if (users[i].email === req.body.email) {
-            needed = users[i]
             message = "Email correct "
+            needed = users[i]
         } else {
             message = "Email incorrect "
         }
     }
-    if (message === "Email incorrect") {
-        return res.status(400).json({ message: "No user found with that email" })
+
+    const comparison = await bcrypt.compareSync(req.body.password, needed.password, (err, res) => {
+        if (err) console.log("Error in comparing password please try again")
+    })
+    if (comparison == true) {
+        return res.status(200).json({ response: message + "and Passwords match" })
     } else {
-        const comparison = await bcrypt.compareSync(req.body.password, needed.password, (err, res) => {
-            if (err) console.log("Error in comparing password please try again")
-        })
-        if (comparison == true) {
-            return res.status(200).json({ message: message + "and Passwords match" })
-        } else {
-            return res.status(400).json({ message: message + "but passwords do not match" })
-        }
+        return res.status(400).json({ response: message + "but passwords do not match" })
     }
 }
